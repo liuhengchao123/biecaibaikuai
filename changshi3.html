@@ -1,0 +1,232 @@
+<!doctype html>
+<html>
+<head>
+<title>别踩白块</title>
+ <meta charset="UTF-8">
+ <meta name="description" content ="慕课教育 http://www.imooc.com/course/list">
+<style >
+	#main
+	{
+		width:400px;
+		height: 400px;
+		border: 2px solid green;
+		margin:0 auto; 
+		position: relative;
+		overflow:hidden;
+	}
+	#container
+	{
+		width: 100%;
+		height: 400px;
+		position: relative;
+		top:-100px;
+		background: white;
+
+	}
+
+	.row
+	{
+		width: 100%;
+		height: 100px;
+
+	}
+	.cell{
+		width: 100px;
+		height: 100px;
+		float: left;
+	}
+	.black
+	{
+		background: black;
+	}
+	#score{
+		text-align: center;
+	}
+</style>
+
+</head>
+ 	 <body>
+ 	 	<h1 id ="score">0</h1>
+  		 <div id ="main">
+      		<div id ="container"></div>
+ 		 </div>
+  	 </body>
+	 
+<script>
+ 
+	var clock = null;
+	var state = 0;//0初始化，1 进行中，3结束
+	var speed=2;
+/*
+初始化
+*/
+ function init()
+	{
+		for (var i =0; i <4 ; i++) 
+		{
+			crow();
+		}
+		$('main').onclick=function(ev)
+		{
+			judge(ev);
+ 		
+		}
+	}
+	
+/*
+  start()动起来
+*/
+	function start()
+	{
+		  clock=window.setInterval('move()',30);
+	}
+
+/*
+创建判断函数
+*/
+	function judge(ev){
+	   if(state == 3)
+	   {
+	    alert('失败者禁入');
+		return;
+	   }
+		if(ev.target.className.indexOf('black')==-1)
+		{
+			fail();
+			}else{
+					ev.target.className ='cell';
+					ev.target.parentNode.pass=1;
+					score();
+
+			}
+	}
+	
+	/*
+	创建 move()函数
+	*/
+	function move()
+	{
+		var con =$('container');
+		var top =parseInt(window.getComputedStyle(con,null)['top']);
+		if(speed+top>0)
+		{
+		top=0;}else{
+		top+=speed;//调节速度
+		}
+	  con.style.top=top+'px'; 
+		
+		
+		
+		if(top==0)
+		{
+			crow();
+			con.style.top='-100px';
+			drow();
+		} else if(-100+speed){
+			var rows=con.childNodes;
+		if((rows.length==5) && (rows[rows.length-1].pass !==1))
+		{
+				fail();
+		}
+		}
+	}
+	/*
+	   加速函数
+	*/
+	function jiasu()
+	{
+	   speed+=2;
+	   if(speed==20)
+	   {
+	   alert('你的电脑太慢了');
+	   }
+		
+	}
+	/*
+	输，结束
+	*/
+
+	function fail()
+	{
+		clearInterval(clock);
+			state= 3;
+		    alert('结束');
+
+	}
+	
+	/*计分
+	*/
+	function score(){
+	var newScore = parseInt($('score').innerHTML)+1;
+		$('score').innerHTML=newScore;
+		if(newScore%5==0)
+		{
+		jiasu();
+		}
+	}
+	
+	/*
+	div.row
+   */	
+	function crow()
+	{ 
+		var con =$('container');
+		var row = cdiv('row');
+		var classes=createSn();
+		for (var i = 0; i <4; i++) {
+			row.appendChild(cdiv(classes[i]));
+		}
+		if (con.firstChild== null) 
+		{
+         con.appendChild(row);
+		}else{
+			con.insertBefore(row,con.firstChild); 
+		}
+		 
+	}
+	/*
+	   删除最后一行
+	*/
+	function drow()
+	{
+ 		var con =$('container');
+		if(con.childrenNodes.length==6)
+		{
+		con.removeChild(con.lastChild);
+		}
+ 			
+ 		
+	}
+	/*
+	创建div
+	*/
+	function cdiv(className)
+	{
+		var div = document.createElement('div');
+        div.className=className;
+        return div;
+	}
+	/**
+      创建随机数组
+	*/
+	function createSn(){
+
+		var arr =['cell','cell','cell','cell']; 
+		var i = Math.floor(Math.random()*4);
+		arr[i]='cell black';
+		return arr;
+	}
+
+	/**
+		获取id对象
+
+	*/
+	function $(id){
+		return document.getElementById(id);
+	}
+
+	init();
+	start();
+</script>
+
+</html>
